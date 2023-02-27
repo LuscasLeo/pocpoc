@@ -10,7 +10,15 @@ Installation
 
 You can install the library using pip:
 
+```sh
 pip install pocpoc
+```
+
+or using poetry:
+
+```sh
+poetry add pocpoc
+```
 
 Features
 --------
