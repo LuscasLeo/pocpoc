@@ -8,5 +8,5 @@ MessageT = TypeVar("MessageT", bound=Message)
 
 class MessageController(ABC, Generic[MessageT]):
     @abstractmethod
-    def execute(self, event: MessageT) -> None:
+    def execute(self, message: MessageT) -> None:
         raise NotImplementedError()
