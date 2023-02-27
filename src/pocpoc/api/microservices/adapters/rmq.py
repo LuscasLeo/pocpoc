@@ -146,7 +146,9 @@ class RabbitMQHandler(ContainerHandler):
                             message_metadata.tracked_context,
                         ):
                             with suppress(UnHandlableMessageException):
-                                message_controller_handler.handle_message(message_metadata, message)
+                                message_controller_handler.handle_message(
+                                    message_metadata, message
+                                )
 
                     except TimeoutError:
                         logger.error(

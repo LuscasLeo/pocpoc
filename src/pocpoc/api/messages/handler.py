@@ -17,5 +17,7 @@ class UnHandlableMessageException(Exception):
 
 class MessageHandler(ABC):
     @abstractmethod
-    def handle_message(self, message_metadata: MessageMetadata, message: Message) -> None:
+    def handle_message(
+        self, message_metadata: MessageMetadata, message: Message
+    ) -> None:
         raise NotImplementedError()
