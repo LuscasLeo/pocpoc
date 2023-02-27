@@ -21,8 +21,12 @@ pytest-cov = "^4.0.0"
 mypy = "0.981"
 flake8 = "3.7"
 black = "^23.1.0"
-sqlalchemy-stubs = {version = "^0.4", optional = true}
-types-pika = {version = "^1.2.0b1", optional = true}
+sqlalchemy-stubs = {version = "^0.4"}
+types-pika = {version = "^1.2.0b1"}
+
+
+[tool.poetry.group.example_1.dependencies]
+flask = "^2.2.3"
 
 [build-system]
 requires = ["poetry-core"]
