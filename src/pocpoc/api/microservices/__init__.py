@@ -12,7 +12,7 @@ from pocpoc.api.di.adapters.custom import (
     CustomDependencyInjectionManager,
 )
 from pocpoc.api.di.class_initializer import ClassInitializer
-from pocpoc.api.messages.controller.event_controller import (
+from pocpoc.api.messages.controller.message_controller import (
     MessageController,
     MessageT,
 )
@@ -91,7 +91,7 @@ class Container:
         self._service_name = service_name
         self._message_map = MessageMap()
         self._rpc_map = RPCMap()
-        self._event_map = MessageControllerMap()
+        self._message_controller_map = MessageControllerMap()
         self._dependency_injection_manager: DependencyInjectionManger = (
             CustomDependencyInjectionManager()
         )
@@ -115,19 +115,19 @@ class Container:
         self._message_map.register_messages(message_type)
         return self
 
-    def register_event_controller(
+    def register_message_controller(
         self,
         message_type: Type[MessageT],
         *controller_type: Type[MessageController[MessageT]]
     ) -> "Container":
-        self._event_map.register(message_type, *controller_type)
+        self._message_controller_map.register(message_type, *controller_type)
         self._message_map.register_messages(message_type)
         return self
 
-    def register_event_hook(
+    def register_message_hook(
         self, message_type: Type[MessageT], controller_type: Callable[[MessageT], None]
     ) -> "Container":
-        self._event_map.register_hook(message_type, controller_type)
+        self._message_controller_map.register_hook(message_type, controller_type)
         self._message_map.register_messages(message_type)
         return self
 

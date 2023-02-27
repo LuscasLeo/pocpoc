@@ -23,13 +23,13 @@ class MessageDecodeError(Exception):
 
 
 class JsonMessageDecoder(MessageDecoder[bytes]):
-    def __init__(self, events_map: MessageMap, encoding: str) -> None:
-        self.message_map = events_map
+    def __init__(self, message_map: MessageMap, encoding: str) -> None:
+        self.message_map = message_map
         self.encoding = encoding
 
     def decode(self, message_metadata: MessageMetadata, payload: bytes) -> Message:
         message_as_dictionary = json.loads(payload.decode(self.encoding))
-        assert isinstance(message_as_dictionary, dict), "Event must be a dict"
+        assert isinstance(message_as_dictionary, dict), "Message must be a dict"
 
         message_type = message_metadata.message_type
         message_cls = self.message_map.get_message_type(message_type)

@@ -1,7 +1,7 @@
 import logging
 from typing import Callable, Dict, Iterable, List, Optional, Type, TypeVar, cast
 
-from pocpoc.api.messages.controller.event_controller import MessageController
+from pocpoc.api.messages.controller.message_controller import MessageController
 from pocpoc.api.messages.map import MessageMap
 from pocpoc.api.messages.message import Message
 
@@ -13,48 +13,48 @@ logger = logging.getLogger(__name__)
 class MessageControllerMap(MessageMap):
     def __init__(self) -> None:
         super().__init__()
-        self.event_controller_map: Dict[
+        self.message_controller_map: Dict[
             Type[Message], List[Type[MessageController[Message]]]
         ] = {}
-        self.event_type_by_name: Dict[str, Type[Message]] = {}
-        self.event_controllers_by_type_name: Dict[
+        self.message_type_by_name: Dict[str, Type[Message]] = {}
+        self.message_controllers_by_type_name: Dict[
             str, List[Type[MessageController[Message]]]
         ] = {}
         self.hooks: Dict[Type[Message], List[Callable[[Message], None]]] = {}
 
     def register(
         self,
-        event_type: Type[MESSAGE_TYPE],
+        message_type: Type[MESSAGE_TYPE],
         *handlers: Type[MessageController[MESSAGE_TYPE]],
     ) -> None:
-        super().register_messages(event_type)
-        self.event_controller_map.setdefault(event_type, []).extend(handlers)  # type: ignore
+        super().register_messages(message_type)
+        self.message_controller_map.setdefault(message_type, []).extend(handlers)  # type: ignore
 
         logger.debug(
-            f"Registered event type {event_type.message_type()} with handlers {[handler.__module__ + '.' + handler.__name__ for handler in handlers]}"
+            f"Registered message type {message_type.message_type()} with handlers {[handler.__module__ + '.' + handler.__name__ for handler in handlers]}"
         )
 
-        self.event_type_by_name[event_type.message_type()] = event_type
-        self.event_controllers_by_type_name.setdefault(
-            event_type.message_type(), []
+        self.message_type_by_name[message_type.message_type()] = message_type
+        self.message_controllers_by_type_name.setdefault(
+            message_type.message_type(), []
         ).extend(cast(Iterable[Type[MessageController[Message]]], handlers))
 
     def get_controllers(
-        self, event_type: str
+        self, message_type: str
     ) -> Optional[List[Type[MessageController[Message]]]]:
-        return self.event_controllers_by_type_name.get(event_type)
+        return self.message_controllers_by_type_name.get(message_type)
 
-    def get_event_type(self, event_type_name: str) -> Optional[Type[Message]]:
+    def get_message_type(self, message_type_name: str) -> Optional[Type[Message]]:
         return (
-            self.event_type_by_name[event_type_name]
-            if event_type_name in self.event_type_by_name
+            self.message_type_by_name[message_type_name]
+            if message_type_name in self.message_type_by_name
             else None
         )
 
     def register_hook(
-        self, event_type: Type[MESSAGE_TYPE], hook: Callable[[MESSAGE_TYPE], None]
+        self, message_type: Type[MESSAGE_TYPE], hook: Callable[[MESSAGE_TYPE], None]
     ) -> None:
-        super().register_messages(event_type)
-        self.hooks.setdefault(event_type, []).append(
+        super().register_messages(message_type)
+        self.hooks.setdefault(message_type, []).append(
             cast(Callable[[Message], None], hook)
         )
