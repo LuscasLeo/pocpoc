@@ -23,7 +23,9 @@ class MessageControllerHandler(MessageHandler):
     def handle_message(
         self, message_metadata: MessageMetadata, message: Message
     ) -> None:
-        handlers_class = self.message_controller_map.get_controllers(message.message_type())
+        handlers_class = self.message_controller_map.get_controllers(
+            message.message_type()
+        )
 
         if handlers_class is None:
             raise UnHandlableMessageException(message_metadata, message, "No handlers")
