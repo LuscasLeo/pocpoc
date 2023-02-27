@@ -27,3 +27,5 @@ types-pika = {version = "^1.2.0b1", extras = ["rabbitmq"]}
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.scripts]
+pocpoc = "pocpoc.api.microservices.cli:cli"
