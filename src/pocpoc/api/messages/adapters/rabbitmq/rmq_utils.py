@@ -16,7 +16,7 @@ def register_messages_as_exchange_to_queue(
     # declare a queue
     channel.queue_declare(queue=service_queue, durable=True)
 
-    # for each event type, declare a exchange and bind to the queue
+    # for each message type, declare a exchange and bind to the queue
     for message_cls in messages:
         logger.debug(
             "Declaring exchange %s and binding to queue %s",

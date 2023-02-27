@@ -25,14 +25,14 @@ class RPCMessageHandler(MessageHandler):
         self.rpc_controller_map = rpc_controller_map
         self.class_initializer = class_initializer
 
-    def handle_message(self, event_data: MessageMetadata, message: Message) -> None:
+    def handle_message(self, message_data: MessageMetadata, message: Message) -> None:
         if not isinstance(message, RPC):
-            raise UnHandlableMessageException(event_data, message, "Not an RPC")
+            raise UnHandlableMessageException(message_data, message, "Not an RPC")
 
         rpc_from_message = message
 
         if rpc_from_message is None:
-            logger.warning("No rpc for message %s", event_data)
+            logger.warning("No rpc for message %s", message_data)
             return
 
         rpc_controller_class = self.rpc_controller_map.get_controller_by_name(
@@ -40,7 +40,7 @@ class RPCMessageHandler(MessageHandler):
         )
 
         if rpc_controller_class is None:
-            logger.warning("No rpc controller for rpc %s", event_data)
+            logger.warning("No rpc controller for rpc %s", message_data)
             return
 
         try:
@@ -49,7 +49,7 @@ class RPCMessageHandler(MessageHandler):
             logger.error(
                 "Error instantiating rpc controller %s for rpc %s",
                 rpc_controller_class,
-                event_data,
+                message_data,
             )
             logger.exception(e)
             return
@@ -61,7 +61,7 @@ class RPCMessageHandler(MessageHandler):
         except Exception as e:
             logger.critical(
                 "Error handling rpc %s with rpc controller %s",
-                event_data,
+                message_data,
                 "{}.{}".format(
                     rpc_controller_class.__module__, rpc_controller_class.__name__
                 ),

@@ -11,19 +11,19 @@ from pocpoc.api.messages.message import Message, MessageMetadata
 logger = logging.getLogger(__name__)
 
 
-class EventMessageHandler(MessageHandler):
+class MessageControllerHandler(MessageHandler):
     def __init__(
         self,
-        event_handler_map: MessageControllerMap,
+        message_controller_map: MessageControllerMap,
         class_initializer: ClassInitializer,
     ) -> None:
-        self.event_handler_map = event_handler_map
+        self.message_controller_map = message_controller_map
         self.class_initializer = class_initializer
 
     def handle_message(
         self, message_metadata: MessageMetadata, message: Message
     ) -> None:
-        handlers_class = self.event_handler_map.get_controllers(message.message_type())
+        handlers_class = self.message_controller_map.get_controllers(message.message_type())
 
         if handlers_class is None:
             raise UnHandlableMessageException(message_metadata, message, "No handlers")

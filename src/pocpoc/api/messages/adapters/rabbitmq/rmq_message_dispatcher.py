@@ -39,13 +39,13 @@ class RMQMessageDispatcher(MessageDispatcher):
                 service_name=self._service_name,
             )
 
-        event_data = MessageMetadata(
+        message_metadata = MessageMetadata(
             message_type=message.message_type(),
             tracked_context=current_context,
             sent_at=datetime.utcnow(),
         )
 
-        body = self.kit_encoder.encode(event_data, message)
+        body = self.kit_encoder.encode(message_metadata, message)
 
         channel.basic_publish(
             exchange=message.message_type(),

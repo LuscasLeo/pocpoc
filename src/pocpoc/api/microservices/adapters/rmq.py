@@ -38,7 +38,7 @@ from pocpoc.api.messages.codec import (
     MessageKitDecoder,
     MessageKitEncoder,
 )
-from pocpoc.api.messages.controller.handler import EventMessageHandler
+from pocpoc.api.messages.controller.handler import MessageControllerHandler
 from pocpoc.api.messages.handler import UnHandlableMessageException
 from pocpoc.api.messages.map import MessageMap
 from pocpoc.api.messages.message import Message, MessageMetadata
@@ -85,8 +85,8 @@ class RabbitMQHandler(ContainerHandler):
             self.kit_encoder,
         )
 
-        event_handler = EventMessageHandler(
-            container._event_map,
+        message_controller_handler = MessageControllerHandler(
+            container._message_controller_map,
             container._dependency_injection_manager,
         )
 
@@ -146,11 +146,11 @@ class RabbitMQHandler(ContainerHandler):
                             message_metadata.tracked_context,
                         ):
                             with suppress(UnHandlableMessageException):
-                                event_handler.handle_message(message_metadata, message)
+                                message_controller_handler.handle_message(message_metadata, message)
 
                     except TimeoutError:
                         logger.error(
-                            "Timeout while event handling message %s",
+                            "Timeout while message %s",
                             message_metadata,
                         )
 
