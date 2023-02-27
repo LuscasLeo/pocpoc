@@ -47,7 +47,7 @@ def bootstrap_multiprocess(handler_path: str, pool_size: int) -> None:
                 try:
                     future.result()
                 except Exception as e:
-                    logger.error("Error: %s", e)
+                    logger.critical("Exception in worker: %s", e, exc_info=True)
 
                 if not GracefulKiller.should_continue():
                     logger.info("GracefulKiller received signal. Exiting.")
