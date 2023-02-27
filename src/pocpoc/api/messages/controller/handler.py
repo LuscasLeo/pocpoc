@@ -1,7 +1,7 @@
 import logging
 
 from pocpoc.api.di.class_initializer import ClassInitializer
-from pocpoc.api.messages.events.event_map import EventMap
+from pocpoc.api.messages.controller.message_map import MessageControllerMap
 from pocpoc.api.messages.handler import (
     MessageHandler,
     UnHandlableMessageException,
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class EventMessageHandler(MessageHandler):
     def __init__(
         self,
-        event_handler_map: EventMap,
+        event_handler_map: MessageControllerMap,
         class_initializer: ClassInitializer,
     ) -> None:
         self.event_handler_map = event_handler_map
