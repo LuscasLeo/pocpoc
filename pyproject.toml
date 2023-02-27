@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pocpoc"
-version = "0.1.4"
+version = "0.1.5"
 description = ""
 authors = ["Lucas Silva <lucas76leonardo@gmail.com>"]
 readme = "README.md"
@@ -32,6 +32,6 @@ build-backend = "poetry.core.masonry.api"
 pocpoc = "pocpoc.api.microservices.cli:cli"
 
 [tool.poetry.extras]
-SQA = ["sqlalchemy", "sqlalchemy-stubs"]
+SQA = ["sqlalchemy", "sqlalchemy-stubs", "alembic"]
 rabbitmq = ["pika", "types-pika"]
 debugging = ["colorlog"]
