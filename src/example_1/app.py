@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Type, TypeVar
 
 from flask import Flask, Response, jsonify, make_response, request
+from example_1.messages import SendResetPasswordEmailCommand
 
 from pocpoc import ClassInitializer
 from pocpoc.api.codec.json_codec import decode
@@ -35,18 +36,6 @@ class ResetPasswordModel:
     """
 
 
-@dataclass(unsafe_hash=True)
-class SendResetPasswordEmailModel(Message):
-    @classmethod
-    def message_type(cls) -> str:
-        return "example_1.commands.send_reset_password_email"
-
-    email: str
-    """
-    Email of the user, used to send the reset password email
-    """
-
-
 def create_app(class_initializer: ClassInitializer) -> Flask:
     app = Flask(__name__)
 
@@ -54,7 +43,7 @@ def create_app(class_initializer: ClassInitializer) -> Flask:
 
     @request_body(ResetPasswordModel)
     def reset_password(body: ResetPasswordModel) -> Response:
-        message_dispatcher.dispatch(SendResetPasswordEmailModel(email=body.email))
+        message_dispatcher.dispatch(SendResetPasswordEmailCommand(email=body.email))
 
         return jsonify({"message": "Password reset"})
 
