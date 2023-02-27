@@ -38,7 +38,7 @@ from pocpoc.api.messages.codec import (
     MessageKitDecoder,
     MessageKitEncoder,
 )
-from pocpoc.api.messages.events.handler import EventMessageHandler
+from pocpoc.api.messages.controller.handler import EventMessageHandler
 from pocpoc.api.messages.handler import UnHandlableMessageException
 from pocpoc.api.messages.map import MessageMap
 from pocpoc.api.messages.message import Message, MessageMetadata
