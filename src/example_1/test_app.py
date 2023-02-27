@@ -1,21 +1,13 @@
 from json import dumps
-from typing import List
+
 from example_1.app import create_app
+from example_1.messages import SendResetPasswordEmailCommand
+from example_1.tests.utils import FakeMessageDispatcher
 from pocpoc.api.di.adapters.custom import CustomDependencyInjectionManager
 from pocpoc.api.messages.dispatcher import MessageDispatcher
-from pocpoc.api.messages.message import Message
-from example_1.messages import SendResetPasswordEmailCommand
 
 
-class FakeMessageDispatcher(MessageDispatcher):
-    def __init__(self) -> None:
-        self.dispatched_messages: List[Message] = []
-
-    def dispatch(self, event: Message) -> None:
-        self.dispatched_messages.append(event)
-
-
-def test_api() -> None:
+def test_reset_password_endpoint() -> None:
     dependency_injection_manager = CustomDependencyInjectionManager()
 
     fake_message_dispatcher = FakeMessageDispatcher()

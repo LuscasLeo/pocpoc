@@ -4,8 +4,11 @@ from example_1.message_controllers.send_email_command_controller import (
 from example_1.messages import SendResetPasswordEmailCommand
 from pocpoc import Container
 
-container = Container("example_1")
+def create_container() -> Container:
+    container = Container("example_1")
 
-container.register_message_controller(
-    SendResetPasswordEmailCommand, SendEmailCommandController
-)
+    container.register_message_controller(
+        SendResetPasswordEmailCommand, SendEmailCommandController
+    )
+
+    return container
