@@ -4,7 +4,7 @@ from example_1.app import create_app
 from pocpoc.api.di.adapters.custom import CustomDependencyInjectionManager
 from pocpoc.api.messages.dispatcher import MessageDispatcher
 from pocpoc.api.messages.message import Message
-from example_1.app import SendResetPasswordEmailModel
+from example_1.messages import SendResetPasswordEmailCommand
 
 
 class FakeMessageDispatcher(MessageDispatcher):
@@ -34,7 +34,7 @@ def test_api() -> None:
     assert len(fake_message_dispatcher.dispatched_messages) == 1
 
     assert (
-        SendResetPasswordEmailModel(email="ll@gg.com")
+        SendResetPasswordEmailCommand(email="ll@gg.com")
         in fake_message_dispatcher.dispatched_messages
     )
 
