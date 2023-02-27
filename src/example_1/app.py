@@ -6,6 +6,25 @@ from flask import Flask, Response, jsonify, make_response, request
 from pocpoc import ClassInitializer
 from pocpoc.api.codec.json_codec import decode
 from pocpoc.api.messages.dispatcher import MessageDispatcher
+from pocpoc.api.messages.message import Message
+
+T = TypeVar("T")
+V = TypeVar("V")
+
+
+def request_body(model: Type[T]) -> Callable[[Callable[..., V]], Callable[..., V]]:
+    def decorator(func: Callable[..., V]) -> Callable[..., V]:
+        def wrapper(*args: Any, **kwargs: Any) -> V:
+            json_body = request.get_json(silent=True)
+            if json_body is None:
+                return jsonify({"message": "Invalid JSON"}), 400  # type: ignore
+
+            body = decode(json_body, model)
+            return func(*args, **{**kwargs, "body": body})
+
+        return wrapper
+
+    return decorator
 
 
 @dataclass
@@ -16,23 +35,16 @@ class ResetPasswordModel:
     """
 
 
-T = TypeVar("T")
-V = TypeVar("V")
+@dataclass(unsafe_hash=True)
+class SendResetPasswordEmailModel(Message):
+    @classmethod
+    def message_type(cls) -> str:
+        return "example_1.commands.send_reset_password_email"
 
-
-def request_body(model: Type[T]) -> Callable[[Callable[..., V]], Callable[..., V]]:
-    def decorator(func: Callable[..., V]) -> Callable[..., V]:
-        def wrapper(*args: Any, **kwargs: Any) -> V:
-            json_body = request.json
-            if json_body is None:
-                return make_response("Invalid request", 400)  # type: ignore
-
-            body = decode(json_body, model)
-            return func(*args, **{**kwargs, "body": body})
-
-        return wrapper
-
-    return decorator
+    email: str
+    """
+    Email of the user, used to send the reset password email
+    """
 
 
 def create_app(class_initializer: ClassInitializer) -> Flask:
@@ -42,7 +54,8 @@ def create_app(class_initializer: ClassInitializer) -> Flask:
 
     @request_body(ResetPasswordModel)
     def reset_password(body: ResetPasswordModel) -> Response:
-        # do something
+        message_dispatcher.dispatch(SendResetPasswordEmailModel(email=body.email))
+
         return jsonify({"message": "Password reset"})
 
     app.add_url_rule(
