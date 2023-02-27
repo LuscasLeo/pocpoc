@@ -1,8 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "-c",
-        "pytest.ini",
-       
+        "-c=pytest.ini",
         "--cov=.",
         "--cov-report=term-missing",
         "--cov-report=html",
