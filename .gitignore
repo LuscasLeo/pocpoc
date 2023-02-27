@@ -10,3 +10,4 @@ local.env
 temp/
 *.env
 !*test.env
+dist
