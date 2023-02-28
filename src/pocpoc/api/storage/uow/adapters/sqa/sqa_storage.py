@@ -5,11 +5,8 @@ from typing import Any, Callable, Type, TypeVar
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session, sessionmaker
 
-from pocpoc.api.storage.types import (
-    EntityNotFound,
-    UnitOfWork,
-    UnitOfWorkFactory,
-)
+from pocpoc.api.storage.types import EntityNotFound
+from pocpoc.api.unit_of_work import UnitOfWork, UnitOfWorkFactory
 
 T = TypeVar("T")
 

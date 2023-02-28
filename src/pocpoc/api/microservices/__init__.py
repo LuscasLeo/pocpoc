@@ -87,13 +87,17 @@ class GracefulKiller:
 
 
 class Container:
-    def __init__(self, service_name: str) -> None:
+    def __init__(
+        self,
+        service_name: str,
+        dependency_injection_manager: Optional[DependencyInjectionManger] = None,
+    ) -> None:
         self._service_name = service_name
         self._message_map = MessageMap()
         self._rpc_map = RPCMap()
         self._message_controller_map = MessageControllerMap()
         self._dependency_injection_manager: DependencyInjectionManger = (
-            CustomDependencyInjectionManager()
+            dependency_injection_manager or (CustomDependencyInjectionManager())
         )
 
         self.register_service(ClassInitializer, self._dependency_injection_manager)
