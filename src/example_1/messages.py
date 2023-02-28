@@ -23,16 +23,15 @@ class ResetPasswordRequest:
 
 @dataclass(unsafe_hash=True)
 class ResetPasswordResponse(Message):
-    
     @classmethod
     def message_type(cls) -> str:
         return "example_1.rpc.reset_password.response"
 
     success: bool
 
+
 @dataclass(unsafe_hash=True)
 class ResetPasswordRPC(RPC[ResetPasswordRequest, ResetPasswordResponse]):
-
     input: ResetPasswordRequest
 
     @classmethod
