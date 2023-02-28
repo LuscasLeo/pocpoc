@@ -7,7 +7,7 @@ from example_1.message_controllers.send_email_command_controller.reset_password_
 )
 from example_1.messages import ResetPasswordRequest
 from pocpoc import ClassInitializer
-from pocpoc.api.codec.json_codec import decode, encode
+from pocpoc.api.codec.json_codec import LocatedValidationErrorCollection, decode, encode
 
 T = TypeVar("T")
 V = TypeVar("V")
@@ -19,8 +19,10 @@ def request_body(model: Type[T]) -> Callable[[Callable[..., V]], Callable[..., V
             json_body = request.get_json(silent=True)
             if json_body is None:
                 return jsonify({"message": "Invalid JSON"}), 400  # type: ignore
-
-            body = decode(json_body, model)
+            try: 
+                body = decode(json_body, model)
+            except LocatedValidationErrorCollection as e:
+                return jsonify({"message": "Invalid Body", "errors": encode(e.errors)}), 400  # type: ignore
             return func(*args, **{**kwargs, "body": body})
 
         return wrapper

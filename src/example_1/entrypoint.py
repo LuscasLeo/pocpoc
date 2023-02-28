@@ -6,6 +6,11 @@ from example_1.message_controllers.send_email_command_controller.reset_password_
 )
 from example_1.messages import ResetPasswordRPC, SendResetPasswordEmailCommand
 from pocpoc import Container
+from pocpoc.api.messages.dispatcher import MessageDispatcher
+from pocpoc.api.messages.uow import MessageDispatcherUnitOfWorkFactory
+from pocpoc.api.storage.uow.adapters.sqa.sqa_storage import SQAAUnitOfWork
+from pocpoc.api.unit_of_work import UnitOfWorkFactory
+from pocpoc.api.unit_of_work.aggregated import AggregatedUnitOfWorkFactory
 
 
 def create_container() -> Container:
@@ -17,6 +22,14 @@ def create_container() -> Container:
     ).register_rpc_controller(
         ResetPasswordRPC,
         ResetPasswordRPCController,
+    ).register_service(
+        UnitOfWorkFactory,
+        AggregatedUnitOfWorkFactory(
+            # SQAAUnitOfWork(
+            #     None
+            # ),
+            MessageDispatcherUnitOfWorkFactory(container.get_class_initializer()),
+        ),
     )
 
     return container
