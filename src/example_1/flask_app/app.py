@@ -19,7 +19,7 @@ def request_body(model: Type[T]) -> Callable[[Callable[..., V]], Callable[..., V
             json_body = request.get_json(silent=True)
             if json_body is None:
                 return jsonify({"message": "Invalid JSON"}), 400  # type: ignore
-            try: 
+            try:
                 body = decode(json_body, model)
             except LocatedValidationErrorCollection as e:
                 return jsonify({"message": "Invalid Body", "errors": encode(e.errors)}), 400  # type: ignore
@@ -30,9 +30,7 @@ def request_body(model: Type[T]) -> Callable[[Callable[..., V]], Callable[..., V
     return decorator
 
 
-def create_app(class_initializer: ClassInitializer) -> Flask:
-    app = Flask(__name__)
-
+def configure_app(app: Flask, class_initializer: ClassInitializer) -> None:
     reset_password_rpc_controller = class_initializer.get_instance(
         ResetPasswordRPCController
     )
@@ -46,8 +44,6 @@ def create_app(class_initializer: ClassInitializer) -> Flask:
     app.add_url_rule(
         "/reset-password", "reset_password", reset_password, methods=["POST"]
     )
-
-    return app
 
 
 # region IN BRAINSTORMING MODE
