@@ -1,6 +1,6 @@
 from json import dumps
 
-from example_1.app import create_app
+from example_1.flask_app.app import create_app
 from example_1.messages import SendResetPasswordEmailCommand
 from example_1.tests.utils import FakeMessageDispatcher
 from pocpoc.api.di.adapters.custom import CustomDependencyInjectionManager
@@ -32,4 +32,4 @@ def test_reset_password_endpoint() -> None:
 
     assert response.status_code == 200
 
-    assert response.json == {"message": "Password reset"}
+    assert response.json == {"success": True}
