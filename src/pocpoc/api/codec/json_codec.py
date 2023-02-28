@@ -1,4 +1,4 @@
-from dataclasses import MISSING, asdict, is_dataclass
+from dataclasses import MISSING, asdict, dataclass, is_dataclass
 from datetime import date, datetime, time
 from decimal import Decimal
 from enum import Enum
@@ -74,11 +74,10 @@ typers_parsers: Dict[Any, TypeDecoder[Any]] = {
 }
 
 
-class LocatedValidationError(Exception):
-    def __init__(self, message: str, json_path: str) -> None:
-        super().__init__(message)
-        self.message = message
-        self.json_path = json_path
+@dataclass
+class LocatedValidationError:
+    message: str
+    json_path: str
 
 
 class LocatedValidationErrorCollection(Exception):
