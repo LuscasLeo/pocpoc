@@ -2,7 +2,7 @@ from typing import Any, Callable, Type, TypeVar
 
 from flask import Flask, Response, jsonify, request
 
-from example_1.message_controllers.send_email_command_controller.reset_password_rpc_controller import (
+from example_1.message_controllers.reset_password_rpc_controller import (
     ResetPasswordRPCController,
 )
 from example_1.messages import ResetPasswordRequest

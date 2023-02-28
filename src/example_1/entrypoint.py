@@ -1,7 +1,7 @@
 from example_1.message_controllers.send_email_command_controller import (
     SendEmailCommandController,
 )
-from example_1.message_controllers.send_email_command_controller.reset_password_rpc_controller import (
+from example_1.message_controllers.reset_password_rpc_controller import (
     ResetPasswordRPCController,
 )
 from example_1.messages import ResetPasswordRPC, SendResetPasswordEmailCommand
