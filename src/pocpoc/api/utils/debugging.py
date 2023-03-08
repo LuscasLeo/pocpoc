@@ -1,16 +1,16 @@
 import logging
-from pathlib import Path
 from fnmatch import fnmatch
+from pathlib import Path
 from typing import Generator, List
-from pocpoc.api.context_tracker.conte_logging_addon import (
-    ContextTrackerLoggingAddon,
-)
-from pocpoc.api.logging.json_logging_formatter import (
-    JsonLoggingFormatter,
-)
-
 
 import colorlog
+
+from pocpoc.api.context_tracker.conte_logging_addon import ContextTrackerLoggingAddon
+from pocpoc.api.logging.json_logging_formatter import (
+    JsonLoggingFormatter,
+)  # type: ignore
+
+module_logger = logging.getLogger(__name__)
 
 
 def configure_logs(
@@ -29,18 +29,23 @@ def configure_logs(
         yield logger
 
 
-def setup_debug_logging(*module_patterns: str) -> None:
-    json_formatter = JsonLoggingFormatter(
+def setup_debug_logging(*module_patterns: str, level: int = logging.DEBUG) -> None:
+    json_formatter = JsonLoggingFormatter(  # type: ignore
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(process)d - %(thread)d - %(threadName)s",
     )
 
     json_formatter.add_addon(ContextTrackerLoggingAddon())
 
-    # logging.getLogger().setLevel(logging.WARNING)
-
     Path("temp").mkdir(exist_ok=True)
 
-    for logger in configure_logs(*module_patterns):
+    include_patterns = [
+        pattern for pattern in module_patterns if not pattern.startswith("!")
+    ]
+    exclude_patterns = [
+        p[1:] for p in list(set(module_patterns) - set(include_patterns))
+    ]
+
+    for logger in configure_logs(*include_patterns, exclude_types=exclude_patterns):
         file_handler = logging.FileHandler("temp/test.log")
         file_handler.setFormatter(json_formatter)
         logger.addHandler(file_handler)
@@ -64,14 +69,13 @@ def setup_debug_logging(*module_patterns: str) -> None:
         )
         logger.addHandler(stream_handler)
 
-        logger.setLevel(logging.DEBUG)
-        # logging.getLogger("__main__").setLevel(logging.DEBUG)
+        logger.setLevel(level)
 
-        logger.debug("Logging initialized")
+        module_logger.debug("Logging {} initialized".format(logger.name))
 
 
-def set_production_logging(*module_patterns: str) -> None:
-    json_formatter = JsonLoggingFormatter(
+def set_production_logging(*module_patterns: str, level: int = logging.INFO) -> None:
+    json_formatter = JsonLoggingFormatter(  # type: ignore
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(process)d - %(thread)d - %(threadName)s",
     )
 
@@ -79,12 +83,18 @@ def set_production_logging(*module_patterns: str) -> None:
 
     Path("temp").mkdir(exist_ok=True)
 
-    for logger in configure_logs(*module_patterns):
+    include_patterns = [
+        pattern for pattern in module_patterns if not pattern.startswith("!")
+    ]
+    exclude_patterns = [
+        p[1:] for p in list(set(module_patterns) - set(include_patterns))
+    ]
+
+    for logger in configure_logs(*include_patterns, exclude_types=exclude_patterns):
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(json_formatter)
         logger.addHandler(stream_handler)
 
-        logger.setLevel(logging.DEBUG)
-        # logging.getLogger("__main__").setLevel(logging.DEBUG)
+        logger.setLevel(level)
 
-        logger.debug("Logging initialized")
+        module_logger.debug("Logging {} initialized".format(logger.name))

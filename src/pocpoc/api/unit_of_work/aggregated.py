@@ -1,7 +1,10 @@
+import logging
 from types import TracebackType
 from typing import List, Type
 
 from pocpoc.api.unit_of_work import UnitOfWork, UnitOfWorkFactory
+
+logger = logging.getLogger(__name__)
 
 
 class AggregatedUnitOfWork(UnitOfWork):
@@ -29,7 +32,20 @@ class AggregatedUnitOfWork(UnitOfWork):
         self, exc_type: Type[Exception], exc_val: Exception, exc_tb: TracebackType
     ) -> None:
         for uow in self.uows:
-            uow.__exit__(exc_type, exc_val, exc_tb)
+            try:
+                uow.__exit__(exc_type, exc_val, exc_tb)
+            except Exception as e:
+                if e == exc_val:
+                    continue
+                else:
+                    logger.critical(
+                        "UnitOfWork.__exit__ raised an exception that was not the "
+                        "original exception. This is a bug in the UnitOfWork "
+                        "implementation. The original exception will be raised.",
+                        exc_info=True,
+                    )
+
+        raise exc_val
 
 
 class AggregatedUnitOfWorkFactory(UnitOfWorkFactory):
