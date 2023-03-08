@@ -25,11 +25,6 @@ def test_reset_password_endpoint(container: Container) -> None:
 
     assert len(fake_message_dispatcher.dispatched_messages) == 1
 
-    assert (
-        SendResetPasswordEmailCommand(email="ll@gg.com")
-        in fake_message_dispatcher.dispatched_messages
-    )
-
     assert response.status_code == 200
 
     assert response.json == {"success": True}

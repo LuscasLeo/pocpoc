@@ -11,6 +11,9 @@ from example_1.entrypoint import (
 from example_1.tests.utils import FakeMessageDispatcher, FakeMessageHandler
 from pocpoc.api.messages.dispatcher import MessageDispatcher
 from pocpoc.api.microservices import Container
+from pocpoc.api.utils.debugging import setup_debug_logging
+
+setup_debug_logging("example.*")
 
 
 @pytest.fixture(scope="session")

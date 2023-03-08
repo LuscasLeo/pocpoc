@@ -44,8 +44,8 @@ class AggregatedUnitOfWork(UnitOfWork):
                         "implementation. The original exception will be raised.",
                         exc_info=True,
                     )
-
-        raise exc_val
+        if exc_type:
+            raise exc_val
 
 
 class AggregatedUnitOfWorkFactory(UnitOfWorkFactory):
