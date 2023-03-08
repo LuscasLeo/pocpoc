@@ -1,27 +1,63 @@
+from abc import ABC, abstractmethod
+import logging
+from typing_extensions import Protocol
+from example_1.message_controllers.password_reset_repository import (
+    EmailPasswordResetRepository,
+)
+from example_1.message_controllers.password_reset_repository_in_memory import (
+    TokenNotFound,
+)
 from example_1.messages import (
-    ResetPasswordRequest,
-    ResetPasswordResponse,
-    SendResetPasswordEmailCommand,
+    PasswordResetSuccessEvent,
+    ResetPasswordInput,
+    ResetPasswordOutput,
 )
 from pocpoc import RPCController
 from pocpoc.api.messages.uow import MessageSubmitter
 from pocpoc.api.unit_of_work import UnitOfWorkFactory
 
-# UNIT OF WORK DOES NOT HAVE TO DO WITH ONLY SQL. IT CAN BE RELATED TO ANY ATOMIC OPERATION
+
+logger = logging.getLogger(__name__)
+
+
+class InvalidTokenException(Exception):
+    pass
+
+
+class TokenExpired(Exception):
+    pass
+
+
+class User(Protocol):
+    email: str
 
 
 class ResetPasswordRPCController(
-    RPCController[ResetPasswordRequest, ResetPasswordResponse]
+    RPCController[ResetPasswordInput, ResetPasswordOutput]
 ):
     def __init__(
-        self, message_submitter: MessageSubmitter, uow_factory: UnitOfWorkFactory
+        self,
+        uow_factory: UnitOfWorkFactory,
+        email_password_reset_repository: EmailPasswordResetRepository,
+        message_submitter: MessageSubmitter,
     ) -> None:
+        self.unit_of_work_factory = uow_factory
+        self.email_password_reset_repository = email_password_reset_repository
         self.message_submitter = message_submitter
-        self.uow_factory = uow_factory
 
-    def execute(self, message: ResetPasswordRequest) -> ResetPasswordResponse:
-        with self.uow_factory() as uow:
-            self.message_submitter.submit(SendResetPasswordEmailCommand(message.email))
+    def execute(self, request: ResetPasswordInput) -> ResetPasswordOutput:
+        try:
+            with self.unit_of_work_factory() as uow:
+                token = self.email_password_reset_repository.get_token(request.token)
+                self.email_password_reset_repository.mark_done(request.token)
 
-            uow.commit()
-            return ResetPasswordResponse(success=True)
+                self.message_submitter.submit(
+                    PasswordResetSuccessEvent(email=token.email)
+                )
+
+                uow.commit()
+
+                return ResetPasswordOutput(success=True)
+
+        except (TokenNotFound, TokenExpired):
+            raise InvalidTokenException()
