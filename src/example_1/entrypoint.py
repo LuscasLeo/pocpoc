@@ -51,6 +51,17 @@ def create_container() -> Container:
         EmailPasswordResetRepository, InMemoryEmailPasswordResetRepository
     )
 
+    """
+    Forcing dependency injection on Business Rules Code is GROSS
+    Business Rule Code need to depend on INTERFACES and not IMPLEMENTATIONS
+
+    Container setup need to support a kind of `middleware` to receive de dependencies and inject then as the interface implementers.
+
+    For example, EmailPasswordResetRepository doesn't need to be a RequestPasswordResetRPCController dependency, they just use email_password_reset_repository.mark_pending function, not all of then
+
+
+    """
+
     return container
 
 
