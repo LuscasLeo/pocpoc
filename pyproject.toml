@@ -29,6 +29,11 @@ types-pika = {version = "^1.2.0b1"}
 [tool.poetry.group.example_1.dependencies]
 flask = "^2.2.3"
 
+
+[tool.poetry.group.example_2.dependencies]
+croniter = "^1.3.8"
+types-croniter = "^1.3.2.6"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
