@@ -3,6 +3,7 @@ import string
 from datetime import datetime
 from typing import Callable, Dict, Optional, Tuple
 from urllib.parse import urlsplit, urlunsplit
+import croniter
 
 from flask import Flask, Response, render_template_string, request
 from typing_extensions import Protocol
@@ -322,6 +323,13 @@ def create_app(
 
             if not request.form["cron"]:
                 return Response("Cron is required", status=400)
+            
+            # tests cron
+            try:
+                croniter.croniter(request.form["cron"])
+            except Exception:
+                return Response("Invalid cron", status=400)
+            
 
             if request.form["task_name"] in info_provider.get_tasks():
                 return Response("Task already exists", status=400)
